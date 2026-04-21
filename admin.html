@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Melody — Track Admin</title>
+<style>
+:root{--bg:#03050c;--s1:#0a0e1c;--s2:#101525;--b1:rgba(120,160,255,.15);--b2:rgba(120,160,255,.3);
+  --tx:#d5e1f5;--mu:#5a6a8a;--ac:#7ec8e3;--vi:#9b7fe8;--go:#e8c56a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;padding:2rem;min-height:100vh;}
+h1{font-size:1.6rem;font-weight:300;color:var(--ac);letter-spacing:.1em;margin-bottom:.3rem;}
+.sub{font-size:.85rem;color:var(--mu);margin-bottom:2rem;}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;}
+.card h2{font-size:1rem;font-weight:500;margin-bottom:1.1rem;color:#e5eeff;display:flex;align-items:center;gap:.5rem;}
+label{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:.4rem;margin-top:.75rem;}
+label:first-of-type{margin-top:0;}
+input,textarea{width:100%;background:var(--s2);border:1px solid var(--b1);color:var(--tx);
+  padding:.65rem .9rem;border-radius:8px;font-size:.88rem;outline:none;font-family:inherit;}
+input:focus,textarea:focus{border-color:var(--ac);}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.btn{background:linear-gradient(135deg,var(--ac),var(--vi));border:none;color:#03050c;
+  padding:.7rem 1.4rem;border-radius:30px;cursor:pointer;font-size:.85rem;font-weight:600;
+  margin-top:1rem;margin-right:.5rem;transition:opacity .2s;}
+.btn:hover{opacity:.85;}
+.btn-gold{background:linear-gradient(135deg,var(--go),#f97316);}
+.btn-red{background:linear-gradient(135deg,#f87171,#ef4444);}
+.btn-sm{padding:.35rem .85rem;font-size:.75rem;border-radius:20px;margin:0;}
+.track-table{width:100%;border-collapse:collapse;font-size:.83rem;}
+.track-table th{text-align:left;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--mu);padding:.5rem .75rem;border-bottom:1px solid var(--b1);}
+.track-table td{padding:.6rem .75rem;border-bottom:1px solid rgba(120,160,255,.06);vertical-align:middle;}
+.track-table tr:hover td{background:var(--s2);}
+.code-badge{background:rgba(126,200,227,.1);border:1px solid rgba(126,200,227,.2);
+  border-radius:5px;padding:.15rem .5rem;font-size:.72rem;color:var(--ac);font-weight:600;}
+.output-box{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:1rem;
+  font-family:monospace;font-size:.75rem;color:#9ca3af;white-space:pre-wrap;word-break:break-all;
+  max-height:220px;overflow-y:auto;margin-top:.75rem;display:none;}
+.info-box{background:rgba(126,200,227,.07);border:1px solid rgba(126,200,227,.18);
+  border-radius:8px;padding:.8rem 1rem;font-size:.82rem;color:var(--ac);margin-bottom:1rem;line-height:1.6;}
+.step-box{background:var(--s2);border-left:3px solid var(--ac);padding:.6rem 1rem;
+  border-radius:0 8px 8px 0;font-size:.82rem;margin-bottom:.5rem;line-height:1.5;}
+.step-box strong{color:var(--tx);}
+.step-box code{background:rgba(126,200,227,.1);padding:.1rem .35rem;border-radius:4px;
+  font-family:monospace;font-size:.78rem;color:var(--ac);}
+.toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;gap:.5rem;z-index:999;}
+.toast{background:var(--s1);border:1px solid var(--b1);border-left:3px solid #4ade80;
+  border-radius:10px;padding:.8rem 1.2rem;font-size:.82rem;opacity:0;transform:translateX(30px);
+  transition:all .3s;max-width:280px;}
+.toast.show{opacity:1;transform:translateX(0);}
+.count-badge{background:rgba(155,127,232,.2);border:1px solid rgba(155,127,232,.3);
+  border-radius:20px;padding:.15rem .65rem;font-size:.72rem;color:var(--vi);margin-left:.5rem;}
+@media(max-width:600px){.row,.row3{grid-template-columns:1fr;}.track-table .hide-mobile{display:none;}}
+</style>
+</head>
+<body>
+
+<h1>🎵 Space Melody — Track Admin</h1>
+<div class="sub">Private artist panel · Manage your 35 tracks without touching the main site</div>
+
+<!-- ADD NEW TRACK -->
+<div class="card">
+  <h2>➕ Add New Track</h2>
+  <div class="info-box">
+    <strong>How to get the SoundCloud slug:</strong><br>
+    Open your track on SoundCloud → copy the URL from the browser bar<br>
+    Example: soundcloud.com/yharpazj/<strong>5m-025-the-final-frontier-x</strong><br>
+    The slug is everything after your username.
+  </div>
+  <div class="row3">
+    <div>
+      <label>Track Code</label>
+      <input type="text" id="new-code" placeholder="e.g. 5M-110">
+    </div>
+    <div>
+      <label>Duration</label>
+      <input type="text" id="new-dur" placeholder="e.g. 4:32">
+    </div>
+    <div>
+      <label>SoundCloud Slug</label>
+      <input type="text" id="new-slug" placeholder="5m-110-track-name">
+    </div>
+  </div>
+  <div>
+    <label>Track Title</label>
+    <input type="text" id="new-title" placeholder="e.g. Cosmic Journey, Pt. 2">
+  </div>
+  <div style="margin-top:.5rem;">
+    <button class="btn" onclick="addTrack()">+ Add Track</button>
+    <button class="btn btn-gold" onclick="exportJSON()">📋 Copy JSON for index.html</button>
+  </div>
+  <div class="output-box" id="export-out"></div>
+</div>
+
+<!-- PASTE SC LINK -->
+<div class="card">
+  <h2>🔗 Extract Slug from SoundCloud Link</h2>
+  <div class="step-box"><strong>Step 1:</strong> Open the track on SoundCloud in your browser</div>
+  <div class="step-box"><strong>Step 2:</strong> Copy the full URL from the address bar</div>
+  <div class="step-box"><strong>Step 3:</strong> Paste it below — slug fills automatically</div>
+  <label>SoundCloud URL</label>
+  <input type="text" id="sc-url" placeholder="https://soundcloud.com/yharpazj/your-track-slug" oninput="autoExtract()">
+  <div id="slug-preview" style="margin-top:.5rem;font-size:.82rem;color:var(--go);display:none;"></div>
+</div>
+
+<!-- HOW TO UPDATE SITE -->
+<div class="card">
+  <h2>🚀 How to Update the Main Site</h2>
+  <div class="step-box"><strong>Step 1:</strong> Add your new tracks using the form above</div>
+  <div class="step-box"><strong>Step 2:</strong> Click <strong>"Copy JSON for index.html"</strong></div>
+  <div class="step-box"><strong>Step 3:</strong> Open <code>index.html</code> in a text editor (Notepad on Windows)</div>
+  <div class="step-box"><strong>Step 4:</strong> Press <strong>Ctrl+F</strong> and search for <code>const TRACKS = [</code></div>
+  <div class="step-box"><strong>Step 5:</strong> Select from the <code>[</code> all the way to the matching <code>];</code> and paste your new JSON</div>
+  <div class="step-box"><strong>Step 6:</strong> Save the file and upload to HostGator — done!</div>
+</div>
+
+<!-- CURRENT TRACKS -->
+<div class="card">
+  <h2>📋 Current Track List <span class="count-badge" id="track-count">0 tracks</span></h2>
+  <div style="overflow-x:auto;">
+    <table class="track-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Title</th>
+          <th class="hide-mobile">Duration</th>
+          <th class="hide-mobile">Slug</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="track-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+var TRACKS = [
+  {"code":"5M-025","title":"Quiet River of Light","dur":"4:12","slug":"5m-025-the-final-frontier-x"},
+  {"code":"5M-026","title":"Celestial Stillness","dur":"3:44","slug":"5m-026-the-final-frontier-x"},
+  {"code":"5M-027","title":"Floating Beyond Time","dur":"4:05","slug":"5m-027-the-final-frontier-x"},
+  {"code":"5M-029","title":"Echoes of Silence","dur":"4:57","slug":"5m-029-the-final-frontier-x"},
+  {"code":"5M-030","title":"Moonlit Meditation","dur":"5:03","slug":"5m-030-the-final-frontier-x"},
+  {"code":"5M-031","title":"Orbit of Calm","dur":"5:04","slug":"5m-031-the-final-frontier-wav"},
+  {"code":"5M-032","title":"Starlight Reflections","dur":"2:52","slug":"5m-032-the-final-frontier-wav"},
+  {"code":"5M-033","title":"Silent Nebula","dur":"3:01","slug":"5m-033-the-final-frontier-wav"},
+  {"code":"5M-035","title":"Infinite Quiet","dur":"4:32","slug":"5m-035-2024-09-19-yh-ver-1-8"},
+  {"code":"5M-036","title":"Drifting Beyond Time","dur":"3:42","slug":"5m-036-2024-09-19-yh-ver-1-8"},
+  {"code":"5M-040","title":"The Quiet Between Stars","dur":"4:01","slug":"5m-040-yh-11-23-07-landr"},
+  {"code":"5M-042","title":"Night Sky","dur":"3:19","slug":"5m-042-yh-11-23-07-landr"},
+  {"code":"5M-045","title":"Velvet Cosmos","dur":"3:21","slug":"5m-045-yh-11-23-07-landr"},
+  {"code":"5M-047","title":"Pale Light of Dawn","dur":"5:02","slug":"5m-047-2023-08-26-ver-3"},
+  {"code":"5M-048","title":"Still Waters Above","dur":"3:17","slug":"5m-048-2023-08-26-ver-3"},
+  {"code":"5M-049","title":"Weightless","dur":"4:18","slug":"5m-049-2024-09-19-yh-ver-1-8"},
+  {"code":"5M-055","title":"Floating Beyond Time, Pt. 2","dur":"3:33","slug":"5m-055-floating-beyond-time"},
+  {"code":"5M-056","title":"Floating Beyond Time, Pt. 3","dur":"4:03","slug":"5m-056-floating-beyond-time"},
+  {"code":"5M-059","title":"Celestial Stillness, Pt. 2","dur":"4:21","slug":"5m-059-celestial-stillness"},
+  {"code":"5M-060","title":"Celestial Stillness, Pt. 3","dur":"4:34","slug":"5m-060-celestial-stillness"},
+  {"code":"5M-061","title":"Celestial Stillness, Pt. 4","dur":"5:13","slug":"5m-061-celestial-stillness-ver"},
+  {"code":"5M-067","title":"White Cloud","dur":"4:14","slug":"5m-067-white-cloud-landr-yh-6"},
+  {"code":"5M-073","title":"Equinox","dur":"4:47","slug":"5m-073-equinox-space-melody"},
+  {"code":"5M-074","title":"Equinox, Pt. 2","dur":"4:28","slug":"5m-074-equinox-space-melody"},
+  {"code":"5M-075","title":"Equinox, Pt. 3","dur":"5:13","slug":"5m-075-equinox-space-melody"},
+  {"code":"5M-084","title":"The Final Frontier","dur":"3:31","slug":"5m-084-the-final-frontier-x"},
+  {"code":"5M-085","title":"The Final Frontier, Pt. 2","dur":"3:29","slug":"5m-085-the-final-frontier-x"},
+  {"code":"5M-086","title":"The Final Frontier, Pt. 3","dur":"3:54","slug":"5m-086-the-final-frontier-x"},
+  {"code":"5M-087","title":"The Final Frontier, Pt. 4","dur":"5:03","slug":"5m-087-the-final-frontier-x"},
+  {"code":"5M-094","title":"Horizon Without End","dur":"4:37","slug":"5m-094-the-final-frontier-x-5"},
+  {"code":"5M-100","title":"Floating Beyond Time, Pt. 4","dur":"3:30","slug":"5m-100-floating-beyond-time"},
+  {"code":"5M-101","title":"Celestial Stillness, Pt. 5","dur":"4:06","slug":"5m-101-2023-08-26-ver-3"},
+  {"code":"5M-104","title":"Light at the Edge of Space","dur":"5:23","slug":"5m-104-yh-1-3-2026-ver-4-x-5"},
+  {"code":"5M-108","title":"The Final Frontier, Pt. 5","dur":"4:42","slug":"5m-108-yh-1-3-2026-ver-4-x-5"},
+  {"code":"5M-109","title":"New Dawn","dur":"3:39","slug":"5m-109-yh-1-3-2026-ver-4-x-5"}
+];
+
+function renderTable(){
+  var tbody = document.getElementById('track-tbody');
+  var sorted = TRACKS.slice().sort(function(a,b){return a.code.localeCompare(b.code);});
+  tbody.innerHTML = sorted.map(function(t,i){
+    var realIdx = TRACKS.indexOf(t);
+    return '<tr>'
+      +'<td><span class="code-badge">'+t.code+'</span></td>'
+      +'<td>'+t.title+'</td>'
+      +'<td class="hide-mobile" style="color:var(--mu)">'+t.dur+'</td>'
+      +'<td class="hide-mobile" style="color:var(--mu);font-size:.75rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+t.slug+'</td>'
+      +'<td><button class="btn btn-red btn-sm" onclick="removeTrack('+realIdx+')">Remove</button></td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('track-count').textContent = TRACKS.length + ' tracks';
+}
+
+function addTrack(){
+  var code  = document.getElementById('new-code').value.trim().toUpperCase();
+  var title = document.getElementById('new-title').value.trim();
+  var dur   = document.getElementById('new-dur').value.trim();
+  var slug  = document.getElementById('new-slug').value.trim().toLowerCase();
+
+  if(!code || !title || !slug){
+    toast('Missing fields', 'Please fill in Code, Title and Slug.', '#f87171');
+    return;
+  }
+  if(!dur) dur = '0:00';
+
+  // Check for duplicate code
+  if(TRACKS.find(function(t){return t.code===code;})){
+    toast('Duplicate code', 'A track with code '+code+' already exists.', '#f87171');
+    return;
+  }
+
+  TRACKS.push({code:code, title:title, dur:dur, slug:slug});
+
+  // Clear form
+  document.getElementById('new-code').value = '';
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-dur').value = '';
+  document.getElementById('new-slug').value = '';
+  document.getElementById('sc-url').value = '';
+  document.getElementById('slug-preview').style.display = 'none';
+
+  renderTable();
+  toast('Track added!', code+' — '+title+' added successfully.', '#4ade80');
+}
+
+function removeTrack(i){
+  var t = TRACKS[i];
+  if(!confirm('Remove "'+t.title+'" ('+t.code+')?\n\nThis only removes it from this admin panel. You still need to export and update index.html.')) return;
+  TRACKS.splice(i, 1);
+  renderTable();
+  toast('Track removed', t.code+' removed from list.', '#f87171');
+}
+
+function exportJSON(){
+  var json = JSON.stringify(TRACKS, null, 2);
+  var out = document.getElementById('export-out');
+  out.textContent = json;
+  out.style.display = 'block';
+  // Copy to clipboard
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(json).then(function(){
+      toast('Copied!', 'JSON copied to clipboard. Paste into index.html.', '#4ade80');
+    }).catch(function(){
+      toast('Export ready', 'Select all text in the box below and copy it manually.', '#e8c56a');
+    });
+  } else {
+    toast('Export ready', 'Select all text in the box below and copy it manually.', '#e8c56a');
+  }
+}
+
+function autoExtract(){
+  var url = document.getElementById('sc-url').value.trim();
+  var preview = document.getElementById('slug-preview');
+  // Match soundcloud.com/username/slug
+  var match = url.match(/soundcloud\.com\/[^\/]+\/([^?&\s]+)/);
+  if(match){
+    var slug = match[1];
+    document.getElementById('new-slug').value = slug;
+    preview.textContent = '✓ Slug extracted: ' + slug;
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+    document.getElementById('new-slug').value = '';
+  }
+}
+
+function toast(title, body, color){
+  var wrap = document.getElementById('toast-wrap');
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.style.borderLeftColor = color || '#4ade80';
+  el.innerHTML = '<strong style="display:block;margin-bottom:.2rem;color:#e5eeff">'+title+'</strong>'
+    +'<span style="color:var(--mu);font-size:.78rem">'+body+'</span>';
+  wrap.appendChild(el);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('show');});});
+  setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove();},400);}, 4000);
+}
+
+// Init
+renderTable();
+</script>
+</body>
+</html>
